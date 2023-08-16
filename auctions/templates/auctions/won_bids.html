@@ -1,0 +1,38 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <style>
+        /* css for the available books */
+        .card {
+        width: 18rem;
+        margin: 10px; /* Margin between the cards */
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center content inside the card horizontally */
+        text-align: center; /* Center the title and description text */
+        }
+    
+        .card-img-top {
+        width: 200px; 
+        height: 300px; 
+        object-fit: cover; /* To ensure that image will maintain ratio and cover the entire area */
+        }
+    </style>
+
+    <h2>Auctions you have won</h2>
+    <hr>
+    <div class="container">
+        <div class="row mx-3">
+            {% for listing in won_listings %}
+            <div class="card" style="width: 18rem;">
+                <img src="{{ listing.url_image }}" class="card-img-top" alt="{{ listing.title }}" style="">
+                <div class="card-body">
+                    <h5 class="card-title">{{ listing.title }}</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

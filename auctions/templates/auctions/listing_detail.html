@@ -1,0 +1,76 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <style>
+        .custom-img {
+            max-width: 300px; /* Adjust the value to your desired width */
+            height: auto;
+        }
+    </style>
+
+    <h2>Listings Details</h2>
+    <hr>
+    <div class="container">
+        <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ listing.url_image }}" alt="{{ listing.title }}" class="img-fluid custom-img">
+                </div>
+            <div class="col-md-6">
+                <h3>{{ listing.title }}</h3>
+                <p>{{ listing.description }}</p>
+                <p>Price: ${{ listing.price }}</p>
+    
+                {# Bidding Form #}
+                <div class="mx-3">
+                    {% if user.is_authenticated %}
+                        <h5>Want to bid?</h5>
+                        <form action="{% url 'listing_detail' id=listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="number" min="{{ listing.price }}" name="bid_amount" placeholder="Bid Amount" required>
+                            <button type="submit" class="btn btn-secondary">Place Bid</button>
+                        </form>
+                        {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+            {% if user.is_authenticated and user == listing.owner and listing.activation_status %}
+            <form action="{% url 'close_auction' listing.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Close Auction</button>
+            </form>
+            {% endif %}
+        
+            {# Display Existing Bids #}
+            <div class="mx-3">
+                <h5>Existing Bids</h5>
+                <ul>
+                    {% for bid in listing.listing_offer.all %}
+                        <li>{{ bid.user }}: ${{ bid.amount }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        
+            {# Comments Section #}
+            <div class="mx-3">
+                <h5>Comments</h5>
+                <ul>
+                    {% for comment in listing_comments %}
+                        {% empty %}
+                            <ul><i>No comments yet.</i></ul>
+                        {% if comment %}
+                            <li>{{ comment.author }}: {{ comment.message }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

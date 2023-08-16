@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>My Listings</h2>
+    <hr>
+    <div class="container">
+        {% if owned_listings %}
+            <ul>
+                {% for listing in owned_listings %}
+                    <li>
+                        <h3>{{ listing.title }}</h3>
+                        <p>{{ listing.description }}</p>
+                        <p>Price: ${{ listing.price }}</p>
+                        <a href="{% url 'listing_detail' id=listing.id %}">View Listing</a>
+                        <br>
+                        {% if listing.activation_status %}
+                            <form action="{% url 'close_auction' listing.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Close Auction</button>
+                            </form>
+                            <br>
+                        {% endif %}
+                
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You have no active listings.</p>
+        {% endif %}
+    </div>
+{% endblock %}
